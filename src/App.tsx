@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+const heroVideos = [
+  "https://www.youtube.com/embed/1SUua3RI64s?autoplay=1&mute=1&loop=1&playlist=1SUua3RI64s&controls=0&showinfo=0",
+  "https://www.youtube.com/embed/rYZyjcWdo84?autoplay=1&mute=1&loop=1&playlist=rYZyjcWdo84&controls=0&showinfo=0",
+  "https://www.youtube.com/embed/74n1-o3GtwY?autoplay=1&mute=1&loop=1&playlist=74n1-o3GtwY&controls=0&showinfo=0",
+  "https://www.youtube.com/embed/VEp3eaRsNX8?autoplay=1&mute=1&loop=1&playlist=VEp3eaRsNX8&controls=0&showinfo=0"
+];
 
 const translations = {
+  // ... existing translations ...
   en: {
+// ...
     nav: { quote: "Get a Quote" },
     hero: {
       title1: "From the club to the main stage.",
@@ -95,6 +99,12 @@ const translations = {
 export default function App() {
   const [lang, setLang] = useState<'en' | 'nl'>('en');
   const t = translations[lang];
+  const [heroVideo, setHeroVideo] = useState(heroVideos[0]);
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * heroVideos.length);
+    setHeroVideo(heroVideos[randomIndex]);
+  }, []);
 
   return (
     <div className="min-h-screen text-gray-100">
@@ -105,8 +115,10 @@ export default function App() {
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
             VIDEOPRODUCTIE.LIVE
           </div>
-          <div className="flex items-center gap-6 text-sm font-medium text-gray-400">
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
             {['Specials', 'Pricing', 'Portfolio', 'Contact'].map(item => <a key={item} href="#" className="hover:text-white transition-colors">{item}</a>)}
+          </div>
+          <div className="flex items-center gap-4">
             <button onClick={() => setLang(lang === 'en' ? 'nl' : 'en')} className="font-bold text-white hover:text-blue-500 transition-colors">
               {lang.toUpperCase()}
             </button>
@@ -116,23 +128,29 @@ export default function App() {
           </div>
         </div>
       </nav>
-
       {/* HERO */}
-      <section className="pt-32 pb-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-2 gap-12 items-center">
-        <div className="content">
-          <h1 className="text-6xl md:text-7xl font-black leading-[1.05] mb-6 tracking-tighter">
+      <section className="relative pt-24 pb-12 px-6 max-w-[1200px] mx-auto flex flex-col-reverse md:grid md:grid-cols-2 gap-8 md:gap-12 items-center transition-all duration-1000 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <iframe
+            className="w-full h-full object-cover"
+            src={heroVideo}
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+            title="Hero Video"
+          />
+          <div className="absolute inset-0 bg-black/60"></div>
+        </div>
+        <div className="content text-center md:text-left relative z-10">
+          <h1 className="text-4xl md:text-7xl font-black leading-[1.05] mb-6 tracking-tighter">
             {t.hero.title1} <span className="gradient-text">{t.hero.title2}</span>
           </h1>
-          <p className="description text-lg text-gray-400 mb-8 max-w-md">{t.hero.desc}</p>
+          <p className="description text-base md:text-lg text-gray-400 mb-8 max-w-md mx-auto md:mx-0">{t.hero.desc}</p>
           <a href="mailto:Studio3@koewe.nl" className="inline-block bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20">
             {t.hero.btn1}
           </a>
         </div>
-        <div className="preview-window glass aspect-video rounded-3xl flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&q=80&w=1000" className="object-cover w-full h-full opacity-60" />
-            <div className="absolute w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.6)]">
-                <div className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[16px] border-l-white ml-1"></div>
-            </div>
+        <div className="preview-window glass aspect-video rounded-3xl flex items-center justify-center relative overflow-hidden w-full z-10">
+            <img src="/hero-concert.jpg" alt="Concert Registratie" className="object-cover w-full h-full opacity-100" />
         </div>
       </section>
 
@@ -165,6 +183,26 @@ export default function App() {
               ></iframe>
             </div>
           ))}
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="py-20 px-6 max-w-[1200px] mx-auto">
+        <h2 className="text-3xl md:text-5xl font-black text-center mb-12 tracking-tighter">What Artists Say</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            { quote: "Absolute game changer for our booking requests.", name: "Ralph van Manen", role: "Singer-Songwriter" },
+            { quote: "The cinematography is levels above anything else.", name: "The Rock Collective", role: "Alternative Band" },
+            { quote: "Professional result, easy process, festival-ready.", name: "Jazz Duo Echo", role: "Jazz Musicians" }
+          ].map((t, i) => (
+            <div key={i} className="glass p-8 rounded-3xl flex flex-col justify-between">
+              <p className="text-gray-300 italic mb-6">"{t.quote}"</p>
+              <div>
+                <p className="font-bold text-white">{t.name}</p>
+                <p className="text-sm text-blue-400">{t.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* FOOTER AREA - Pricing/Contact */}
