@@ -96,6 +96,21 @@ const translations = {
   }
 };
 
+const NAV_ITEMS = ['Specials', 'Pricing', 'Portfolio', 'Contact'];
+
+const PORTFOLIO_VIDEOS = [
+  "https://www.youtube.com/embed/1SUua3RI64s",
+  "https://www.youtube.com/embed/rYZyjcWdo84",
+  "https://www.youtube.com/embed/74n1-o3GtwY",
+  "https://www.youtube.com/embed/VEp3eaRsNX8"
+];
+
+const TESTIMONIALS = [
+  { quote: "Absolute game changer for our booking requests.", name: "Ralph van Manen", role: "Singer-Songwriter" },
+  { quote: "The cinematography is levels above anything else.", name: "The Rock Collective", role: "Alternative Band" },
+  { quote: "Professional result, easy process, festival-ready.", name: "Jazz Duo Echo", role: "Jazz Musicians" }
+];
+
 export default function App() {
   const [lang, setLang] = useState<'en' | 'nl'>('en');
   const t = translations[lang];
@@ -116,7 +131,7 @@ export default function App() {
             VIDEOPRODUCTIE.LIVE
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
-            {['Specials', 'Pricing', 'Portfolio', 'Contact'].map(item => <a key={item} href="#" className="hover:text-white transition-colors">{item}</a>)}
+            {NAV_ITEMS.map(item => <a key={item} href="#" className="hover:text-white transition-colors">{item}</a>)}
           </div>
           <div className="flex items-center gap-4">
             <button onClick={() => setLang(lang === 'en' ? 'nl' : 'en')} className="font-bold text-white hover:text-blue-500 transition-colors">
@@ -167,12 +182,7 @@ export default function App() {
       
       {/* PORTFOLIO GRID */}
       <section className="py-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-2 gap-8">
-          {[
-            "https://www.youtube.com/embed/1SUua3RI64s",
-            "https://www.youtube.com/embed/rYZyjcWdo84",
-            "https://www.youtube.com/embed/74n1-o3GtwY",
-            "https://www.youtube.com/embed/VEp3eaRsNX8"
-          ].map((url, i) => (
+          {PORTFOLIO_VIDEOS.map((url, i) => (
             <div key={i} className="glass aspect-video rounded-3xl overflow-hidden relative">
               <iframe
                 className="w-full h-full"
@@ -189,11 +199,7 @@ export default function App() {
       <section className="py-20 px-6 max-w-[1200px] mx-auto">
         <h2 className="text-3xl md:text-5xl font-black text-center mb-12 tracking-tighter">What Artists Say</h2>
         <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { quote: "Absolute game changer for our booking requests.", name: "Ralph van Manen", role: "Singer-Songwriter" },
-            { quote: "The cinematography is levels above anything else.", name: "The Rock Collective", role: "Alternative Band" },
-            { quote: "Professional result, easy process, festival-ready.", name: "Jazz Duo Echo", role: "Jazz Musicians" }
-          ].map((t, i) => (
+          {TESTIMONIALS.map((t, i) => (
             <div key={i} className="glass p-8 rounded-3xl flex flex-col justify-between">
               <p className="text-gray-300 italic mb-6">"{t.quote}"</p>
               <div>
