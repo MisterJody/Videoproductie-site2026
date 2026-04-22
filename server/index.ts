@@ -26,7 +26,7 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 // Basic auth check middleware
 const auth = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization;
-  if (token === process.env.ADMIN_TOKEN) {
+  if (process.env.ADMIN_TOKEN && token === process.env.ADMIN_TOKEN) {
     next();
   } else {
     res.status(401).json({ error: 'Unauthorized' });
