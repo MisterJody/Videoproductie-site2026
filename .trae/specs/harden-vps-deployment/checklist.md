@@ -1,0 +1,7 @@
+- [x] No client bundle contains private secrets (no `GEMINI_API_KEY` injection; no secrets present in `dist/`)
+- [x] `npm run build` succeeds on a clean install
+- [x] `npm run lint` (TypeScript noEmit) succeeds
+- [x] A documented VPS-friendly production runtime exists (Docker and/or Nginx reverse proxy instructions)
+- [x] Baseline production security headers are configured and verified in the documented runtime
+- [x] Embedded media is lazy-loaded where appropriate and iframes use safer attributes
+- [x] `src/App.tsx` is refactored into smaller modules/components without changing the visual output
