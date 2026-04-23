@@ -1,20 +1,35 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Videoproductie Live Landing Page
 
-# Run and deploy your AI Studio app
+## Run locally
+- Install dependencies: `npm install`
+- Start dev server: `npm run dev`
 
-This contains everything you need to run your app locally.
+## Build
+- Production build: `npm run build`
+- Local production preview: `npm run preview`
 
-View your app in AI Studio: https://ai.studio/apps/a11b1c9f-2e6c-47fd-af3c-e98a12410c93
+## Deploy (VPS)
 
-## Run Locally
+### Node (no Docker)
+- Build: `npm ci && npm run build`
+- Run: `PORT=8080 HOST=0.0.0.0 npm start`
 
-**Prerequisites:**  Node.js
+### Docker
+- Build image: `docker build -t videoproductie-live .`
+- Run container: `docker run --rm -p 8080:8080 videoproductie-live`
 
+### Nginx reverse proxy (example)
+```
+server {
+  listen 80;
+  server_name example.com;
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+  location / {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+```
