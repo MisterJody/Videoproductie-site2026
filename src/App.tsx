@@ -141,7 +141,7 @@ export default function App() {
           <div className="absolute inset-0 bg-black/60"></div>
         </div>
         <div className="content text-center md:text-left relative z-10">
-          <h1 className="text-6xl font-black leading-[62.6px] mb-[23px] tracking-tighter">
+          <h1 className="text-[45px] font-black leading-[62.6px] mb-[28px] tracking-tighter w-[414.017px]">
             {t.hero.title1} <span className="gradient-text">{t.hero.title2}</span>
           </h1>
           <p className="description text-base md:text-lg text-gray-400 mb-8 max-w-md mx-auto md:mx-0">{t.hero.desc}</p>
