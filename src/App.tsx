@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion } from "motion/react";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 
 const heroVideos = [
-  "https://www.youtube.com/embed/1SUua3RI64s?autoplay=1&mute=1&loop=1&playlist=1SUua3RI64s&controls=0&showinfo=0",
-  "https://www.youtube.com/embed/rYZyjcWdo84?autoplay=1&mute=1&loop=1&playlist=rYZyjcWdo84&controls=0&showinfo=0",
-  "https://www.youtube.com/embed/74n1-o3GtwY?autoplay=1&mute=1&loop=1&playlist=74n1-o3GtwY&controls=0&showinfo=0",
-  "https://www.youtube.com/embed/VEp3eaRsNX8?autoplay=1&mute=1&loop=1&playlist=VEp3eaRsNX8&controls=0&showinfo=0"
+  "https://www.youtube.com/embed/1SUua3RI64s?autoplay=1&mute=1&loop=1&playlist=1SUua3RI64s&controls=0&showinfo=0&enablejsapi=1",
+  "https://www.youtube.com/embed/rYZyjcWdo84?autoplay=1&mute=1&loop=1&playlist=rYZyjcWdo84&controls=0&showinfo=0&enablejsapi=1",
+  "https://www.youtube.com/embed/74n1-o3GtwY?autoplay=1&mute=1&loop=1&playlist=74n1-o3GtwY&controls=0&showinfo=0&enablejsapi=1",
+  "https://www.youtube.com/embed/VEp3eaRsNX8?autoplay=1&mute=1&loop=1&playlist=VEp3eaRsNX8&controls=0&showinfo=0&enablejsapi=1"
 ];
 
 const translations = {
@@ -100,11 +102,30 @@ export default function App() {
   const [lang, setLang] = useState<'en' | 'nl'>('en');
   const t = translations[lang];
   const [heroVideo, setHeroVideo] = useState(heroVideos[0]);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * heroVideos.length);
     setHeroVideo(heroVideos[randomIndex]);
   }, []);
+
+  const togglePlay = () => {
+    if (iframeRef.current) {
+      const command = isPlaying ? 'pauseVideo' : 'playVideo';
+      iframeRef.current.contentWindow?.postMessage(`{"event":"command","func":"${command}","args":""}`, '*');
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (iframeRef.current) {
+      const command = isMuted ? 'unMute' : 'mute';
+      iframeRef.current.contentWindow?.postMessage(`{"event":"command","func":"${command}","args":""}`, '*');
+      setIsMuted(!isMuted);
+    }
+  };
 
   return (
     <div className="min-h-screen text-gray-100">
@@ -129,7 +150,7 @@ export default function App() {
         </div>
       </nav>
       {/* HERO */}
-      <section className="relative pt-24 pb-12 px-6 max-w-[1200px] mx-auto flex flex-col-reverse md:grid md:grid-cols-2 gap-8 md:gap-12 items-center transition-all duration-1000 overflow-hidden">
+      <section className="group relative pt-24 pb-12 px-6 max-w-[1200px] mx-auto flex flex-col-reverse md:grid md:grid-cols-2 gap-8 md:gap-12 items-center transition-all duration-1000 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <iframe
             className="w-full h-full object-cover"
@@ -137,8 +158,19 @@ export default function App() {
             frameBorder="0"
             allow="autoplay; encrypted-media"
             title="Hero Video"
+            ref={iframeRef}
           />
           <div className="absolute inset-0 bg-black/60"></div>
+          
+          {/* Controls Overlay */}
+          <div className="absolute bottom-6 left-6 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button onClick={togglePlay} className="bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-sm">
+              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+            </button>
+            <button onClick={toggleMute} className="bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-sm">
+              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
+          </div>
         </div>
         <div className="content text-center md:text-left relative z-10">
           <h1 className="text-[45px] font-black leading-[62.6px] mb-[28px] tracking-tighter w-[414.017px]">
@@ -155,7 +187,12 @@ export default function App() {
       </section>
 
       {/* FEATURES GRID */}
-      <section className="py-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-3 gap-8">
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="py-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-3 gap-8">
           {[t.value.feat1, t.value.feat2, t.value.feat3].map((feat, i) => (
             <div key={i} className="glass p-8 rounded-3xl">
                 <div className="text-blue-500 font-bold mb-4">✓</div>
@@ -163,10 +200,15 @@ export default function App() {
                 <p className="text-sm text-gray-400">{feat[1]}</p>
             </div>
           ))}
-      </section>
+      </motion.section>
       
       {/* PORTFOLIO GRID */}
-      <section className="py-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-2 gap-8">
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="py-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-2 gap-8">
           {[
             "https://www.youtube.com/embed/1SUua3RI64s",
             "https://www.youtube.com/embed/rYZyjcWdo84",
@@ -183,10 +225,15 @@ export default function App() {
               ></iframe>
             </div>
           ))}
-      </section>
+      </motion.section>
 
       {/* TESTIMONIALS */}
-      <section className="py-20 px-6 max-w-[1200px] mx-auto">
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="py-20 px-6 max-w-[1200px] mx-auto">
         <h2 className="text-3xl md:text-5xl font-black text-center mb-12 tracking-tighter">What Artists Say</h2>
         <div className="grid md:grid-cols-3 gap-8">
           {[
@@ -203,10 +250,15 @@ export default function App() {
             </div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* FOOTER AREA - Pricing/Contact */}
-      <footer className="py-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-3 gap-8">
+      <motion.footer
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="py-20 px-6 max-w-[1200px] mx-auto grid md:grid-cols-3 gap-8">
           <div className="glass p-8 rounded-3xl md:col-span-2 space-y-8">
             <h2 className="text-3xl font-bold">{t.pricing.title}</h2>
             <div className="grid md:grid-cols-2 gap-4">
@@ -224,7 +276,7 @@ export default function App() {
             <div className="text-xs uppercase text-gray-500 mb-6 tracking-widest">{t.pricing.ex}</div>
             <a href="mailto:Studio3@koewe.nl" className="bg-blue-600 p-4 rounded-xl font-bold hover:bg-blue-500 transition-all">{t.pricing.btn}</a>
           </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
